@@ -44,7 +44,7 @@ void OnBoardManager::check()
 	// Check for unhandled RF data first
 	if(pReceivedPacket != NULL)
 	{
-		Decoder *decoder = getDecoderThatHandlesPacket(pReceivedPacket);
+		Decoder *decoder = getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(pReceivedPacket);
 
 		if(decoder != NULL)
 		{
@@ -81,8 +81,7 @@ void OnBoardManager::check()
 	}
 }
 
-/// Returns NULL if a suitable decoder is not found.
-Decoder* OnBoardManager::getDecoderThatHandlesPacket(RFPacket* packet)
+Decoder* OnBoardManager::getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(RFPacket* packet)
 {
 	Decoder* result = NULL;
 
@@ -95,7 +94,6 @@ Decoder* OnBoardManager::getDecoderThatHandlesPacket(RFPacket* packet)
 		if(canDecoderDecodeThePacket)
 		{
 			result = decoder;
-			break;
 		}
 	}
 

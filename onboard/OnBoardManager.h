@@ -25,7 +25,7 @@ private:
 	Decoder*		m_Decoders[NUM_DECODERS];
 	Encoder*			m_encoder;
 
-	Decoder* getDecoderThatHandlesPacket(RFPacket* packet);
+	Decoder* getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(RFPacket* packet);
 
 public:
 	OnBoardManager();

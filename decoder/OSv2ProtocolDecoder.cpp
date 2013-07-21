@@ -103,12 +103,9 @@ boolean OSv2ProtocolDecoder::decode(RFPacket* pPacket)
             return false;
         }
 	}
-	if(total_bits == 136) {
-		//resetDecoder(); //finished decoding packet, prepare for next
-		return 1;
-	}
-	else return false;
 
+	bool isFinishedDecodingThePacket = (total_bits == 136);
+	return isFinishedDecodingThePacket;
 }
 
 void OSv2ProtocolDecoder::reportSerial() {
