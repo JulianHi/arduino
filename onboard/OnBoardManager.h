@@ -23,8 +23,9 @@ private:
 	RFPacket		m_PacketTransmit;
 
 	Decoder*		m_Decoders[NUM_DECODERS];
-	int				m_nLastDecode;
 	Encoder*			m_encoder;
+
+	Decoder* getDecoderThatHandlesPacket(RFPacket* packet);
 
 public:
 	OnBoardManager();

@@ -22,8 +22,6 @@ extern NinjaLED leds;
 
 OnBoardManager::OnBoardManager()
 {
-	m_nLastDecode = -1;
-
 	m_Decoders[0] = new CommonProtocolDecoder();
 	m_Decoders[1] = new WT450ProtocolDecoder();
 	m_Decoders[2] = new arlecProtocolDecoder();
@@ -46,28 +44,16 @@ void OnBoardManager::check()
 	// Check for unhandled RF data first
 	if(pReceivedPacket != NULL)
 	{
-		bool bDecodeSuccessful = false;
-		m_nLastDecode = -1;
+		Decoder *decoder = getDecoderThatHandlesPacket(pReceivedPacket);
 
-		for(int i = 0; i < NUM_DECODERS; i++)
-		{
-			if(m_Decoders[i]->decode(pReceivedPacket))
-			{
-				m_nLastDecode = i;
-
-				bDecodeSuccessful = true;
-			}
-			pReceivedPacket->rewind();
-		}
-
-		if(bDecodeSuccessful)
+		if(decoder != NULL)
 		{
 			// Blink stat LED to show activity
 			leds.blinkStat();
 
 			NinjaPacket packet;
 			
-			m_Decoders[m_nLastDecode]->fillPacket(&packet);
+			decoder->fillPacket(&packet);
 			
 			packet.printToSerial();
 		}
@@ -93,6 +79,27 @@ void OnBoardManager::check()
 
 		packet.printToSerial();
 	}
+}
+
+/// Returns NULL if a suitable decoder is not found.
+Decoder* OnBoardManager::getDecoderThatHandlesPacket(RFPacket* packet)
+{
+	Decoder* result = NULL;
+
+	for(int i = 0; i < NUM_DECODERS; i++)
+	{
+		Decoder *decoder = m_Decoders[i];
+		bool canDecoderDecodeThePacket = decoder->decode(packet);
+		packet->rewind();
+
+		if(canDecoderDecodeThePacket)
+		{
+			result = decoder;
+			break;
+		}
+	}
+
+	return result;
 }
 
 void OnBoardManager::handle(NinjaPacket* pPacket)
