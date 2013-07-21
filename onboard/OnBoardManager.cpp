@@ -122,12 +122,7 @@ void OnBoardManager::handle(NinjaPacket* pPacket)
 				m_encoder = new HE330v2ProtocolEncoder(pPacket->getTiming());
 				break;	
 		}
-		
-		if(pPacket->dataInArray))
-			m_encoder->setCode(pPacket->getDataArray());
-		else 
-			m_encoder->setCode(pPacket->getData());
-			
+
 		m_encoder->setCode(pPacket->getData());
 		m_encoder->encode(&m_PacketTransmit);
 		
