@@ -20,6 +20,9 @@
 
 extern NinjaLED leds;
 
+static void sendHeartBeatPacket(void);
+
+//TODO: rename this and move it to decoders.....a
 OnBoardManager::OnBoardManager()
 {
 	m_Decoders[0] = new CommonProtocolDecoder();
@@ -62,23 +65,27 @@ void OnBoardManager::check()
 		m_Receiver.purge();
 	}
 
-	// Check if heartbeat expired
-	if(heartbeat.isExpired())
-	{
-		NinjaPacket packet;
-
-		packet.setType(TYPE_DEVICE);
-		packet.setGuid(0);
-		packet.setDevice(ID_STATUS_LED);
-		packet.setData(leds.getStatColor());
-
-		packet.printToSerial();
-		
-		packet.setDevice(ID_NINJA_EYES);
-		packet.setData(leds.getEyesColor());
-
-		packet.printToSerial();
+	if (heartbeat.isExpired()) {
+		sendHeartBeatPacket();
+		// why isn't the heartbeat being reset here?
 	}
+}
+
+static void sendHeartBeatPacket() {
+	NinjaPacket packet;
+
+	packet.setType(TYPE_DEVICE);
+	packet.setGuid(0);
+	packet.setDevice(ID_STATUS_LED);
+	packet.setData(leds.getStatColor());
+
+	packet.printToSerial();
+
+
+	packet.setDevice(ID_NINJA_EYES);
+	packet.setData(leds.getEyesColor());
+
+	packet.printToSerial();
 }
 
 Decoder* OnBoardManager::getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(RFPacket* packet)
@@ -100,10 +107,12 @@ Decoder* OnBoardManager::getEachDecoderToAttemptToDecodeThePacketAndGetDecoderTh
 	return result;
 }
 
+
 void OnBoardManager::handle(NinjaPacket* pPacket)
 {
-	if(pPacket->getGuid() != 0)
+	if (pPacket->getGuid() != 0) { //TODO: extract constant..
 		return;
+	}
 
 	if(pPacket->getDevice() == ID_STATUS_LED)
 		leds.setStatColor(pPacket->getData());
