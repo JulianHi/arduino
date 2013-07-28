@@ -19,7 +19,7 @@ volatile unsigned int	cycleCount;
 static void handleSerialData(void);
 //
 
-int freeRam ()
+int freeRam () //TODO: rename this
 {
 	extern int __heap_start, *__brkval;
 	int v;
@@ -27,8 +27,7 @@ int freeRam ()
 	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
 
-void setup()
-{
+void setup() {
 	delay(2000);
 
 	jsonSerial.setup(9600); //TODO: 57600 baudrate once dynamic baud detection is implemented in the client
@@ -74,12 +73,13 @@ static void handleSerialData(void) {
 ISR(TIMER1_OVF_vect)				// interrupt service routine
 { 
 	TCNT1 = 63536;	 // preload timer
-	cycleCount = cycleCount+1;
-	if (cycleCount == leds.m_nDutyCycle)
-		leds.statOff();
+	cycleCount++;
 
-	if (cycleCount == leds.m_nPeriod)
-	{
+	if (cycleCount == leds.m_nDutyCycle) {
+		leds.statOff();
+	}
+
+	if (cycleCount == leds.m_nPeriod) {
 		leds.statOn();
 		cycleCount = 0;
 	}
