@@ -115,6 +115,8 @@ void OnBoardManager::handle(NinjaPacket* pPacket)
 		
 		char encoding = pPacket->getEncoding();
 		
+		//TODO: add support for OSv2ProtocolEncoder...
+		//TODO: reduce duplication between OSv2ProtocolEncoder and CommonProtocolEncoder e.g. make CommonProtocolEncoder more general..l
 		switch (encoding)
 		{
 			case ENCODING_COMMON:
