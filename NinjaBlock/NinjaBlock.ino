@@ -13,8 +13,11 @@
 OnBoardManager	onBoardManager;
 PortManager		 portManager;
 NinjaLED				leds;
-NinjaPacket		 ninjaPacket;
 volatile unsigned int	cycleCount;
+
+// function prototypes
+static void handleSerialData(void);
+//
 
 int freeRam ()
 {
@@ -34,15 +37,28 @@ void setup()
 	onBoardManager.setup();
 }
 
-void loop()
-{
-	// 1. Check for serial data
-	if(jsonSerial.read(&ninjaPacket))
-	{
-		if(ninjaPacket.getGuid() > 0)
+void loop() {
+	handleSerialData();
+	heartbeat.check(); //TODO: rename this... what does this do...?????
+
+	// 2. Check hardware ports for changes
+	portManager.check();
+
+	// 3. Check onboard components for incoming data
+	onBoardManager.check();
+
+	heartbeat.resume();
+}
+
+static void handleSerialData(void) {
+	static NinjaPacket ninjaPacket; //TODO: determine if this need to be static or not.
+
+	if (jsonSerial.read(&ninjaPacket)) 	{
+		if (ninjaPacket.getGuid() > 0) {
 			portManager.handle(&ninjaPacket);
-		else
+		} else {
 			onBoardManager.handle(&ninjaPacket);
+		}
 
 		/*Serial.print("G=");
 		Serial.println(ninjaPacket.getGuid());
@@ -53,16 +69,6 @@ void loop()
 		Serial.print("Ram=");
 		Serial.println(freeRam());*/
 	}
-
-	heartbeat.check();
-
-	// 2. Check hardware ports for changes
-	portManager.check();
-
-	// 3. Check onboard components for incoming data
-	onBoardManager.check();
-
-	heartbeat.resume();
 }
 
 ISR(TIMER1_OVF_vect)				// interrupt service routine
