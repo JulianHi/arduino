@@ -1,18 +1,18 @@
-#ifndef ARLECPROTOCOLENCODER_H
-#define ARLECPROTOCOLENCODER_H
+#ifndef bOutDProtocolEncoder_H
+#define bOutDProtocolEncoder_H
 
 #include "Encoder.h"
 
-class arlecProtocolEncoder :
+class bOutDProtocolEncoder :
 	public Encoder
 {
 private:
-	unsigned long	m_nCode;
+	unsigned long long	m_nCode;
 	int				m_nPulseLength;
 	int				m_nTriplePulseLength;
 
 public:
-	arlecProtocolEncoder(int nPulseLength);
+	bOutDProtocolEncoder(int nPulseLength);
 
 	void	setCode(unsigned long long nCode);
 	void	encode(RFPacket* pPacket);
