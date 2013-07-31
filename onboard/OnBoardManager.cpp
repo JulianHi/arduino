@@ -44,6 +44,7 @@ void OnBoardManager::check()
 {
 	RFPacket*	pReceivedPacket = m_Receiver.getPacket();
 
+	//TODO: move this to decoder..
 	// Check for unhandled RF data first
 	if(pReceivedPacket != NULL)
 	{
